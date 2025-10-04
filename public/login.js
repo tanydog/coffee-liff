@@ -1,4 +1,5 @@
-const LIFF_ID = "2007510292-Y5g8j4NO"; // 実際のLIFF IDに置き換え済み
+// public/login.js
+const LIFF_ID = window.ENV.LIFF_ID;
 
 document.addEventListener("DOMContentLoaded", async () => {
   const loginBtn = document.getElementById("loginButton");
@@ -6,81 +7,57 @@ document.addEventListener("DOMContentLoaded", async () => {
   const errorMessage = document.getElementById("errorMessage");
   const successMessage = document.getElementById("successMessage");
 
-  // 表示制御：ローディング切り替え
   const showLoading = (isLoading) => {
+    if (!loginBtn || !loadingBtn) return;
     loginBtn.style.display = isLoading ? "none" : "inline-flex";
     loadingBtn.style.display = isLoading ? "inline-flex" : "none";
   };
-
-  // 表示制御：エラー表示
   const showError = (msg) => {
+    if (!errorMessage || !successMessage) return;
     errorMessage.textContent = msg;
     errorMessage.style.display = "block";
     successMessage.style.display = "none";
   };
-
-  // 表示制御：成功表示
   const showSuccess = (msg) => {
+    if (!errorMessage || !successMessage) return;
     successMessage.textContent = msg;
     successMessage.style.display = "block";
     errorMessage.style.display = "none";
   };
 
-  // ログイン成功後の処理
-  const handleLoginSuccess = async () => {
+  async function handleLoginSuccess() {
     try {
-      const profile = await liff.getProfile();
-      console.log("👤 ユーザープロフィール:", profile);
+      const idToken = liff.getIDToken();
+      if (!idToken) throw new Error("ID token missing");
 
-      const userData = {
-        userId: profile.userId,
-        displayName: profile.displayName,
-        pictureUrl: profile.pictureUrl,
-        loginDate: new Date().toISOString(),
-      };
+      const profile = await liff.getProfile().catch(() => null);
+      showSuccess(`ようこそ${profile?.displayName ? `、${profile.displayName}` : ""}！診断を開始します...`);
 
-      // セッションストレージに保存
-      sessionStorage.setItem("userData", JSON.stringify(userData));
-
-      showSuccess("ログインに成功しました！診断を開始します...");
-
-      setTimeout(() => {
-        window.location.href = "/diagnosis.html";
-      }, 2000);
+      setTimeout(() => { window.location.href = "/diagnosis.html"; }, 1500);
     } catch (err) {
-      console.error("❌ プロフィール取得エラー:", err);
+      console.error("after login error:", err);
       showError("ユーザー情報の取得に失敗しました。");
-    } finally {
       showLoading(false);
     }
-  };
+  }
 
-  // 初期化とログイン処理
   try {
     await liff.init({ liffId: LIFF_ID });
-    console.log("✅ LIFF initialized");
+    if (liff.isLoggedIn()) await handleLoginSuccess();
 
-    if (liff.isLoggedIn()) {
-      await handleLoginSuccess(); // すでにログイン済みの場合
-    }
-
-    // ログインボタンのクリックイベント
-    loginBtn.addEventListener("click", async () => {
+    loginBtn?.addEventListener("click", async () => {
       showLoading(true);
       try {
-        if (!liff.isLoggedIn()) {
-          liff.login(); // 自動でリダイレクト
-          return;
-        }
+        if (!liff.isLoggedIn()) { liff.login(); return; }
         await handleLoginSuccess();
       } catch (err) {
-        console.error("❌ ログインエラー:", err);
-        showError("ログインに失敗しました。もう一度お試しください。");
+        console.error("login error:", err);
+        showError("ログインに失敗しました。");
         showLoading(false);
       }
     });
   } catch (err) {
-    console.error("❌ LIFF初期化エラー:", err);
+    console.error("LIFF初期化エラー:", err);
     showError("LIFFの初期化に失敗しました。");
   }
 });

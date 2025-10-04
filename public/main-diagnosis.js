@@ -1,16 +1,6 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-// LIFF初期化
-const LIFF_ID = '2007510292-EGZenBxd';
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBW_0l5uScxeMeOtxq4WV2QKbCtkaqJMak",
-  authDomain: "tanycoffee.firebaseapp.com",
-  projectId: "tanycoffee"
-};
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+// public/main-diagnosis.js
+const LIFF_ID = window.ENV.LIFF_ID;
+const API_BASE = window.ENV.API_BASE;
 
 const typeData = {
   SENSE: { emoji: '🎨', name: 'センステイスター', tagline: '感性で味わう、アートな一杯。' },
@@ -21,46 +11,18 @@ const typeData = {
   TRADITIONAL: { emoji: '🏠', name: 'トラディショナルブリュワー', tagline: '変わらない安心感、定番の美味しさ。' }
 };
 
-async function renderResults() {
-  const params = new URLSearchParams(window.location.search);
-  let types = params.get('type')?.split('+') || [];
-  const container = document.getElementById('resultsContainer');
-
-  // typeパラメータがない場合：Firestoreから取得
-  if (types.length === 0 || !params.get('type')) {
-    // LIFFログイン（ユーザー判別）
-    await liff.init({ liffId: LIFF_ID });
-    if (!liff.isLoggedIn()) {
-      liff.login();
-      return;
-    }
-    const profile = await liff.getProfile();
-    const userId = profile.userId;
-
-    // Firestoreから診断情報取得
-    const ref = doc(db, 'diagnosis', userId);
-    const snap = await getDoc(ref);
-    if (!snap.exists()) {
-      container.innerHTML = '<p class="body">診断結果が見つかりませんでした。<br><a href="diagnosis.html">診断を始める</a></p>';
-      return;
-    }
-    const data = snap.data();
-    types = data.type ? data.type.split('+') : [];
-  }
-
-  // おすすめ豆のデータ取得
-  const snapshot = await getDocs(collection(db, 'recommendations'));
-  const beanMap = {};
-  snapshot.forEach(doc => beanMap[doc.id] = doc.data());
-
-  // 結果表示
-  types.forEach(type => {
+async function ensureLogin() {
+  await liff.init({ liffId: LIFF_ID });
+  if (!liff.isLoggedIn()) { liff.login(); throw new Error("redirecting"); }
+}
+function renderCards(container, types, beanMap) {
+  container.innerHTML = "";
+  types.forEach((type) => {
     const t = typeData[type];
     const bean = beanMap[type];
     if (!t) return;
-
-    const card = document.createElement('div');
-    card.className = 'card';
+    const card = document.createElement("div");
+    card.className = "card";
     card.innerHTML = `
       <div class="card-header" style="text-align:center;">
         <div class="h1">${t.emoji}</div>
@@ -81,4 +43,36 @@ async function renderResults() {
   });
 }
 
-document.addEventListener('DOMContentLoaded', renderResults);
+async function renderResults() {
+  const container = document.getElementById("resultsContainer");
+  container.innerHTML = '<div class="body">読み込み中...</div>';
+
+  try {
+    await ensureLogin();
+    const idToken = liff.getIDToken();
+    if (!idToken) throw new Error("missing idToken");
+
+    const res = await fetch(`${API_BASE}/diagnosis`, { headers: { Authorization: `Bearer ${idToken}` } });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const diag = await res.json();
+
+    if (!diag || !diag.type) {
+      container.innerHTML = '<p class="body">診断結果が見つかりませんでした。<br><a href="diagnosis.html">診断を始める</a></p>';
+      return;
+    }
+
+    const types = Array.isArray(diag.type) ? diag.type : String(diag.type).split("+").filter(Boolean);
+
+    const recRes = await fetch(`${API_BASE}/recommendations`);
+    if (!recRes.ok) throw new Error(`HTTP ${recRes.status}`);
+    const beanMap = await recRes.json();
+
+    renderCards(container, types, beanMap);
+  } catch (err) {
+    if (String(err).includes("redirecting")) return;
+    console.error("診断表示エラー:", err);
+    container.innerHTML = '<p class="body">診断結果の取得に失敗しました。</p>';
+  }
+}
+
+document.addEventListener("DOMContentLoaded", renderResults);
