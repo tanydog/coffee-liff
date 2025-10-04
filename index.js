@@ -29,23 +29,38 @@ app.post('/webhook', line.middleware(config), (req, res) => {
 });
 
 // イベント処理
-async function handleEvent(event) {
+function handleEvent(event) {
   if (event.type !== 'message' || event.message.type !== 'text') {
     return Promise.resolve(null);
   }
 
   const userId = event.source.userId;
 
-  // Firestore にユーザー情報を保存（既存なら上書き）
-  await db.collection('users').doc(userId).set({
-    registeredAt: admin.firestore.FieldValue.serverTimestamp()
-  }, { merge: true });
+  // LINEのプロフィール情報を取得
+  return client.getProfile(userId)
+    .then(profile => {
+      const { displayName, pictureUrl } = profile;
 
-  // 応答メッセージ
-  return client.replyMessage(event.replyToken, {
-    type: 'text',
-    text: `ユーザーID ${userId} を登録しました！☕`
-  });
+      // Firestoreに保存
+      return db.collection('users').doc(userId).set({
+        displayName,
+        pictureUrl,
+        createdAt: new Date()
+      }, { merge: true }) // 既存ドキュメントがある場合は上書きせずに更新
+      .then(() => {
+        return client.replyMessage(event.replyToken, {
+          type: 'text',
+          text: `こんにちは、${displayName}さん！情報を記録しました☕`
+        });
+      });
+    })
+    .catch(err => {
+      console.error('ユーザー情報取得エラー', err);
+      return client.replyMessage(event.replyToken, {
+        type: 'text',
+        text: 'プロフィールの取得に失敗しました。'
+      });
+    });
 }
 
 app.listen(3000, () => {
