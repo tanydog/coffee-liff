@@ -5,7 +5,6 @@
   <title>診断結果</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="/styles/coffee-design.css" />
-  <script type="module" src="main-result.js"></script>
 </head>
 <body>
   <div class="container">
@@ -29,8 +28,18 @@
     </a>
   </footer>
 
-  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-  <script src="main.js"></script>
-  
+  <!-- スクリプトの読み込み順を固定 -->
+  <script src="/config.js" defer></script>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js" defer></script>
+  <script src="/main-result.js" defer></script>
+
+  <!-- 任意: 設定チェック -->
+  <script defer>
+    window.addEventListener('DOMContentLoaded', () => {
+      if (!window.ENV || !window.ENV.LIFF?.DIAG || !window.ENV.API_BASE) {
+        console.warn('config.js の設定不足: ENV.LIFF.DIAG / ENV.API_BASE');
+      }
+    });
+  </script>
 </body>
 </html>

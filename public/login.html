@@ -1,179 +1,33 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>コーヒー診断サービス - ログイン</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="/styles/coffee-design.css">
-  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-  <script defer src="/login.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/styles/coffee-design.css" />
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #8B4513, #D2B48C);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 2rem;
-      margin: 0;
-    }
-
-    .login-container {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-      border-radius: 1.5rem;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-      padding: 2.5rem;
-      max-width: 400px;
-      width: 100%;
-      text-align: center;
-      animation: fadeIn 0.8s ease-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .logo {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.08); }
-    }
-
-    .app-title {
-      font-size: 1.8rem;
-      font-weight: bold;
-      color: var(--coffee-primary);
-      margin-bottom: 0.5rem;
-    }
-
-    .app-subtitle {
-      color: var(--gray-600);
-      font-size: 1rem;
-      margin-bottom: 2rem;
-    }
-
-    .login-title {
-      font-size: 1.2rem;
-      margin-bottom: 1rem;
-      color: var(--gray-800);
-      font-weight: 600;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      font-size: 1rem;
-      padding: 0.75rem 1.5rem;
-      border-radius: var(--radius-lg);
-      border: none;
-      cursor: pointer;
-      font-weight: 600;
-      width: 100%;
-      transition: all 0.2s ease;
-    }
-
-    .btn-line {
-      background-color: var(--line-green);
-      color: white;
-    }
-
-    .btn-line:hover {
-      background-color: #009900;
-      box-shadow: 0 8px 20px rgba(0, 185, 0, 0.3);
-      transform: translateY(-2px);
-    }
-
-    .btn-line:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .loading {
-      width: 1rem;
-      height: 1rem;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-top: 2px solid white;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .features {
-      text-align: left;
-      margin-top: 2rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid var(--gray-200);
-    }
-
-    .features-title {
-      font-size: 0.9rem;
-      font-weight: bold;
-      margin-bottom: 0.5rem;
-      color: var(--gray-700);
-    }
-
-    .feature-list {
-      list-style: none;
-      padding-left: 0;
-    }
-
-    .feature-item {
-      margin-bottom: 0.5rem;
-      color: var(--gray-600);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.95rem;
-    }
-
-    .error-message,
-    .success-message {
-      margin-top: 1.5rem;
-      font-size: 0.9rem;
-      padding: 1rem;
-      border-radius: var(--radius-lg);
-      display: none;
-    }
-
-    .error-message {
-      background-color: #FEF2F2;
-      color: #991B1B;
-      border: 1px solid #FECACA;
-    }
-
-    .success-message {
-      background-color: #ECFDF5;
-      color: #065F46;
-      border: 1px solid #A7F3D0;
-    }
-
-    @media (max-width: 480px) {
-      .login-container {
-        padding: 2rem 1.5rem;
-      }
-
-      .app-title {
-        font-size: 1.5rem;
-      }
-
-      .logo {
-        font-size: 2.5rem;
-      }
-    }
+    /* 既存スタイルはそのまま */
+    body{font-family:'Inter',sans-serif;background:linear-gradient(135deg,#8B4513,#D2B48C);min-height:100vh;display:flex;justify-content:center;align-items:center;padding:2rem;margin:0;}
+    .login-container{background:rgba(255,255,255,.95);backdrop-filter:blur(10px);border-radius:1.5rem;box-shadow:0 20px 40px rgba(0,0,0,.1);padding:2.5rem;max-width:400px;width:100%;text-align:center;animation:fadeIn .8s ease-out;}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .logo{font-size:3rem;margin-bottom:1rem;animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+    .app-title{font-size:1.8rem;font-weight:bold;color:var(--coffee-primary);margin-bottom:.5rem}
+    .app-subtitle{color:var(--gray-600);font-size:1rem;margin-bottom:2rem}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;font-size:1rem;padding:.75rem 1.5rem;border-radius:var(--radius-lg);border:none;cursor:pointer;font-weight:600;width:100%;transition:.2s}
+    .btn-line{background-color:var(--line-green);color:#fff}
+    .btn-line:hover{background-color:#009900;box-shadow:0 8px 20px rgba(0,185,0,.3);transform:translateY(-2px)}
+    .btn-line:disabled{opacity:.6;cursor:not-allowed}
+    .loading{width:1rem;height:1rem;border:2px solid rgba(255,255,255,.3);border-top:2px solid #fff;border-radius:50%;animation:spin 1s linear infinite}
+    @keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+    .features{text-align:left;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--gray-200)}
+    .features-title{font-size:.9rem;font-weight:bold;margin-bottom:.5rem;color:var(--gray-700)}
+    .feature-list{list-style:none;padding-left:0}
+    .feature-item{margin-bottom:.5rem;color:var(--gray-600);display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+    .error-message,.success-message{margin-top:1.5rem;font-size:.9rem;padding:1rem;border-radius:var(--radius-lg);display:none}
+    .error-message{background:#FEF2F2;color:#991B1B;border:1px solid #FECACA}
+    .success-message{background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0}
+    @media (max-width:480px){.login-container{padding:2rem 1.5rem}.app-title{font-size:1.5rem}.logo{font-size:2.5rem}}
   </style>
 </head>
 <body>
@@ -181,12 +35,15 @@
     <div class="logo">☕</div>
     <h1 class="app-title">コーヒー診断</h1>
     <p class="app-subtitle">あなたにぴったりのコーヒーを見つけましょう</p>
-  <a href="#" id="loginButton">
-    <img src="/assets/btn_login_base.png" alt="LINEでログイン" style="width:100%; max-width:200px;">
-  </a>
-  <button id="loadingBtn" class="btn btn-line btn-full" style="display:none; margin-top:1rem;" disabled>
-    <span class="loading"></span> ログイン中...
-  </button>
+
+    <!-- 画像ボタン（login.js でクリックハンドラを付与） -->
+    <a href="#" id="loginButton" aria-label="LINEでログイン">
+      <img src="/assets/btn_login_base.png" alt="LINEでログイン" style="width:100%;max-width:200px;" />
+    </a>
+    <button id="loadingBtn" class="btn btn-line btn-full" style="display:none;margin-top:1rem;" disabled>
+      <span class="loading"></span> ログイン中...
+    </button>
+
     <div class="features">
       <p class="features-title">このアプリでできること</p>
       <ul class="feature-list">
@@ -200,5 +57,19 @@
     <div class="error-message" id="errorMessage">ログインに失敗しました。もう一度お試しください。</div>
     <div class="success-message" id="successMessage">ログインに成功しました！診断を開始します...</div>
   </div>
+
+  <!-- スクリプトはページ末尾に、かつ読み込み順を固定 -->
+  <script src="/config.js" defer></script>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js" defer></script>
+  <script src="/login.js" defer></script>
+
+  <!-- 任意: 設定チェック -->
+  <script defer>
+    window.addEventListener('DOMContentLoaded', () => {
+      if (!window.ENV || !window.ENV.LIFF?.LOGIN) {
+        console.warn('config.js の設定不足: ENV.LIFF.LOGIN');
+      }
+    });
+  </script>
 </body>
 </html>

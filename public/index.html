@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>コーヒーログ記録</title>
-  <link rel="stylesheet" href="/styles/coffee-design.css">
+  <link rel="stylesheet" href="/styles/coffee-design.css" />
 </head>
 <body>
   <div class="container" style="padding-bottom:90px;">
@@ -12,25 +12,24 @@
     <form id="coffeeForm" class="card" style="margin-top:1.5rem;">
       <div class="form-group">
         <label for="beanType" class="form-label">豆の種類</label>
-        <input type="text" id="beanType" class="form-input" required placeholder="例: コロンビア・スプレモ">
+        <input type="text" id="beanType" class="form-input" required placeholder="例: コロンビア・スプレモ" />
       </div>
       <div class="form-group">
         <label for="taste" class="form-label">味の感想</label>
-        <input type="text" id="taste" class="form-input" required placeholder="例: フルーティな酸味で朝にぴったり">
+        <input type="text" id="taste" class="form-input" required placeholder="例: フルーティな酸味で朝にぴったり" />
       </div>
       <div class="form-group">
         <label for="amount" class="form-label">飲んだ量（ml）</label>
-        <input type="number" id="amount" class="form-input" min="1" required placeholder="例: 180">
+        <input type="number" id="amount" class="form-input" min="1" required placeholder="例: 180" />
       </div>
       <button type="submit" class="btn btn-primary btn-full">記録する</button>
     </form>
+
     <p id="result" class="body" style="margin-top:1rem;"></p>
 
     <!-- 記録一覧 -->
     <header class="h2" style="margin-bottom:1rem;">☕️ ログ記録</header>
-
     <div id="logsList"></div>
-
   </div>
 
   <!-- 下部タブバー -->
@@ -49,7 +48,20 @@
     </a>
   </footer>
 
-  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-  <script src="main.js"></script>
+  <!-- ① config を最優先で読む（gitignore 対象） -->
+  <script src="/config.js" defer></script>
+
+  <!-- ② LIFF SDK → ③ 画面ロジック(main.js) -->
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js" defer></script>
+  <script src="/main.js" defer></script>
+
+  <!-- （任意）config 未ロード時の簡易警告 -->
+  <script defer>
+    window.addEventListener('DOMContentLoaded', () => {
+      if (!window.ENV || !window.ENV.LIFF?.LOG || !window.ENV.API_BASE) {
+        console.warn('config.js の設定不足: ENV.LIFF.LOG / ENV.API_BASE');
+      }
+    });
+  </script>
 </body>
 </html>
