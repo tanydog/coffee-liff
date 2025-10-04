@@ -1,2 +1,5 @@
+# functions 専用
 node_modules/
-*.local
+lib/                 # TS ビルド成果(使っている場合)
+.env                 # Emulator 用の秘密ファイルを万一置くなら
+.runtimeconfig.json  # functions:config のローカル書き出し
