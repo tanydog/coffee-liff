@@ -1,6 +1,7 @@
 // public/profile.js
 // 診断/結果と同じ LIFF（アプリ内ページなので DIAG を利用）
-const LIFF_ID = window.ENV?.LIFF?.DIAG;
+const env = window.ENV || {};
+const LIFF_ID = env?.LIFF?.DIAG || env?.LIFF_ID;
 
 async function ensureLogin() {
   await liff.init({ liffId: LIFF_ID });

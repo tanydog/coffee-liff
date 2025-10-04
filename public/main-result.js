@@ -1,9 +1,10 @@
 // public/main-result.js
-const LIFF_ID = window.ENV?.LIFF?.DIAG;   // 診断用 LIFF
-const API_BASE = window.ENV?.API_BASE;    // Functions のベースURL
+const env = window.ENV || {};
+const LIFF_ID = env?.LIFF?.DIAG || env?.LIFF_ID;   // 診断用 LIFF
+const API_BASE = env?.API_BASE;    // Functions のベースURL
 
 if (!LIFF_ID || !API_BASE) {
-  console.error("config.js の設定が不足しています");
+  console.error("config.js の設定が不足しています (ENV.LIFF.DIAG または ENV.LIFF_ID / ENV.API_BASE)");
   alert("設定が不足しています。管理者に連絡してください。");
 }
 

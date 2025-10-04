@@ -1,6 +1,11 @@
 // public/main-diagnosis.js
-const LIFF_ID = window.ENV.LIFF_ID;
-const API_BASE = window.ENV.API_BASE;
+const env = window.ENV || {};
+const LIFF_ID = env?.LIFF?.DIAG || env?.LIFF_ID;
+const API_BASE = env?.API_BASE;
+
+if (!LIFF_ID || !API_BASE) {
+  console.error("config.js の設定が不足しています (ENV.LIFF.DIAG または ENV.LIFF_ID / ENV.API_BASE)");
+}
 
 const typeData = {
   SENSE: { emoji: '🎨', name: 'センステイスター', tagline: '感性で味わう、アートな一杯。' },
@@ -44,6 +49,11 @@ function renderCards(container, types, beanMap) {
 }
 
 async function renderResults() {
+  if (!LIFF_ID || !API_BASE) {
+    alert("設定が不足しています。管理者に連絡してください。");
+    return;
+  }
+
   const container = document.getElementById("resultsContainer");
   container.innerHTML = '<div class="body">読み込み中...</div>';
 
