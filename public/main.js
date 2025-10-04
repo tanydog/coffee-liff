@@ -1,6 +1,11 @@
 // public/main.js
-const LIFF_ID = window.ENV.LIFF_ID;
-const API_BASE = window.ENV.API_BASE;
+const env = window.ENV || {};
+const LIFF_ID = env?.LIFF?.LOG || env?.LIFF_ID;
+const API_BASE = env?.API_BASE;
+
+if (!LIFF_ID || !API_BASE) {
+  console.error("config.js の設定が不足しています (ENV.LIFF.LOG または ENV.LIFF_ID / ENV.API_BASE)");
+}
 
 async function ensureLogin() {
   await liff.init({ liffId: LIFF_ID });
@@ -16,6 +21,11 @@ function setLoading(btn, on) {
 }
 
 window.onload = async () => {
+  if (!LIFF_ID || !API_BASE) {
+    alert("設定が不足しています。管理者に連絡してください。");
+    return;
+  }
+
   try {
     await ensureLogin();
     const idToken = liff.getIDToken();

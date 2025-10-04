@@ -1,7 +1,18 @@
 // public/login.js
-const LIFF_ID = window.ENV.LIFF_ID;
+const env = window.ENV || {};
+const LIFF_ID = env?.LIFF?.LOGIN || env?.LIFF_ID;
 
 document.addEventListener("DOMContentLoaded", async () => {
+  if (!LIFF_ID) {
+    console.error("config.js の設定が不足しています (ENV.LIFF.LOGIN または ENV.LIFF_ID)");
+    const errorMessage = document.getElementById("errorMessage");
+    if (errorMessage) {
+      errorMessage.textContent = "設定が不足しています。管理者に連絡してください。";
+      errorMessage.style.display = "block";
+    }
+    return;
+  }
+
   const loginBtn = document.getElementById("loginButton");
   const loadingBtn = document.getElementById("loadingBtn");
   const errorMessage = document.getElementById("errorMessage");

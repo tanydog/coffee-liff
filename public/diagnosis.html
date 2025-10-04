@@ -56,8 +56,10 @@
   <!-- 任意: 設定チェック -->
   <script defer>
     window.addEventListener('DOMContentLoaded', () => {
-      if (!window.ENV || !window.ENV.LIFF?.DIAG || !window.ENV.API_BASE) {
-        console.warn('config.js の設定不足: ENV.LIFF.DIAG / ENV.API_BASE');
+      const env = window.ENV || {};
+      const hasLiffId = !!(env?.LIFF?.DIAG || env?.LIFF_ID);
+      if (!hasLiffId || !env?.API_BASE) {
+        console.warn('config.js の設定不足: ENV.LIFF.DIAG または ENV.LIFF_ID / ENV.API_BASE');
       }
     });
   </script>
