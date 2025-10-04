@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>診断結果</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/styles/coffee-design.css" />
+  <script type="module" src="main-result.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1 class="h1">☕ あなたのコーヒータイプは…</h1>
+    <div id="resultsContainer" class="component-grid"></div>
+  </div>
+
+  <!-- 下部タブバー -->
+  <footer style="position:fixed;bottom:0;left:0;width:100%;background:var(--white);border-top:1px solid var(--gray-300);display:flex;justify-content:space-around;padding:0.5rem 0;z-index:10;">
+    <a href="index.html" style="flex:1;text-align:center;color:var(--coffee-primary);font-weight:600;">
+      <div>☕<div style="font-size:0.9em;">記録</div></div>
+    </a>
+    <a href="diagnosis.html" style="flex:1;text-align:center;">
+      <div>🧪<div style="font-size:0.9em;">診断</div></div>
+    </a>
+    <a href="result.html" style="flex:1;text-align:center;">
+      <div>📊<div style="font-size:0.9em;">傾向</div></div>
+    </a>
+    <a href="profile.html" style="flex:1;text-align:center;">
+      <div>👤<div style="font-size:0.9em;">自分</div></div>
+    </a>
+  </footer>
+
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <script src="main.js"></script>
+  
+</body>
+</html>

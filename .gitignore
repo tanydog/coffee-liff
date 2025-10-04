@@ -1,0 +1,13 @@
+# secrets
+.env
+.env.*
+*.pem
+*.p12
+*_credentials.json
+*firebase-adminsdk*.json
+
+# node
+node_modules/
+
+# mac
+.DS_Store

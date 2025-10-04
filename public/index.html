@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>コーヒーログ記録</title>
+  <link rel="stylesheet" href="/styles/coffee-design.css">
+</head>
+<body>
+  <div class="container" style="padding-bottom:90px;">
+    <!-- 新規記録フォーム -->
+    <form id="coffeeForm" class="card" style="margin-top:1.5rem;">
+      <div class="form-group">
+        <label for="beanType" class="form-label">豆の種類</label>
+        <input type="text" id="beanType" class="form-input" required placeholder="例: コロンビア・スプレモ">
+      </div>
+      <div class="form-group">
+        <label for="taste" class="form-label">味の感想</label>
+        <input type="text" id="taste" class="form-input" required placeholder="例: フルーティな酸味で朝にぴったり">
+      </div>
+      <div class="form-group">
+        <label for="amount" class="form-label">飲んだ量（ml）</label>
+        <input type="number" id="amount" class="form-input" min="1" required placeholder="例: 180">
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">記録する</button>
+    </form>
+    <p id="result" class="body" style="margin-top:1rem;"></p>
+
+    <!-- 記録一覧 -->
+    <header class="h2" style="margin-bottom:1rem;">☕️ ログ記録</header>
+
+    <div id="logsList"></div>
+
+  </div>
+
+  <!-- 下部タブバー -->
+  <footer style="position:fixed;bottom:0;left:0;width:100%;background:var(--white);border-top:1px solid var(--gray-300);display:flex;justify-content:space-around;padding:0.5rem 0;z-index:10;">
+    <a href="index.html" style="flex:1;text-align:center;color:var(--coffee-primary);font-weight:600;">
+      <div>☕<div style="font-size:0.9em;">記録</div></div>
+    </a>
+    <a href="diagnosis.html" style="flex:1;text-align:center;">
+      <div>🧪<div style="font-size:0.9em;">診断</div></div>
+    </a>
+    <a href="result.html" style="flex:1;text-align:center;">
+      <div>📊<div style="font-size:0.9em;">傾向</div></div>
+    </a>
+    <a href="profile.html" style="flex:1;text-align:center;">
+      <div>👤<div style="font-size:0.9em;">自分</div></div>
+    </a>
+  </footer>
+
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>コーヒー診断</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/styles/coffee-design.css">
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <script defer src="main-diagnosis.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1 class="h1">☕ コーヒー嗜好診断</h1>
+
+    <form id="diagnosisForm" class="card">
+      <!-- 質問ループ例 -->
+      <div class="form-group">
+        <h2 class="h3">Q1. コーヒーを飲むとき、どんな気持ちで選んでいますか？</h2>
+        <div class="radio-group">
+          <label class="radio-option"><input type="radio" name="q1" value="SENSE"> 直感で「これだ」と感じたもの</label>
+          <label class="radio-option"><input type="radio" name="q1" value="ANALYTIC"> 味の特徴やレビューを分析して</label>
+          <label class="radio-option"><input type="radio" name="q1" value="EMOTIONAL"> 気分や感情に合うものを選ぶ</label>
+          <label class="radio-option"><input type="radio" name="q1" value="CURIOUS"> 飲んだことのない豆をあえて選ぶ</label>
+          <label class="radio-option"><input type="radio" name="q1" value="CASUAL"> なんとなく、気軽に</label>
+          <label class="radio-option"><input type="radio" name="q1" value="TRADITIONAL"> いつもの安定した味を</label>
+        </div>
+      </div>
+
+      <!-- 以下、Q2〜Q6も同様の形式で -->
+      <div class="form-group">
+        <h2 class="h3">Q2. コーヒーを飲む時間帯で好きなのは？</h2>
+        <div class="radio-group">
+          <label class="radio-option"><input type="radio" name="q2" value="SENSE"> 朝の直感を大切にしたい</label>
+          <label class="radio-option"><input type="radio" name="q2" value="ANALYTIC"> 午後の集中タイムに合わせて</label>
+          <label class="radio-option"><input type="radio" name="q2" value="EMOTIONAL"> 夜、気持ちを落ち着けたいとき</label>
+          <label class="radio-option"><input type="radio" name="q2" value="CURIOUS"> 思い立ったらいつでも新しい味を</label>
+          <label class="radio-option"><input type="radio" name="q2" value="CASUAL"> どんな時間でも気軽に</label>
+          <label class="radio-option"><input type="radio" name="q2" value="TRADITIONAL"> 食後のほっとする時間に</label>
+        </div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="form-group">
+        <h2 class="h3">Q3. あなたの理想のカフェの雰囲気は？</h2>
+        <div class="radio-group">
+          <label class="radio-option"><input type="radio" name="q3" value="SENSE"> アートやデザインに刺激を受ける空間</label>
+          <label class="radio-option"><input type="radio" name="q3" value="ANALYTIC"> 無音・無機質で作業がはかどる空間</label>
+          <label class="radio-option"><input type="radio" name="q3" value="EMOTIONAL"> 木の温もりと柔らかい照明</label>
+          <label class="radio-option"><input type="radio" name="q3" value="CURIOUS"> 個性的で不思議な内装のカフェ</label>
+          <label class="radio-option"><input type="radio" name="q3" value="CASUAL"> フラっと立ち寄れるチェーン系</label>
+          <label class="radio-option"><input type="radio" name="q3" value="TRADITIONAL"> 昔ながらの喫茶店</label>
+        </div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="form-group">
+        <h2 class="h3">Q4. 豆を選ぶときに気になるのは？</h2>
+        <div class="radio-group">
+          <label class="radio-option"><input type="radio" name="q4" value="SENSE"> パッケージや名前のセンス</label>
+          <label class="radio-option"><input type="radio" name="q4" value="ANALYTIC"> 生産地や精製方法などの情報</label>
+          <label class="radio-option"><input type="radio" name="q4" value="EMOTIONAL"> 「癒される」や「リラックス」などの表現</label>
+          <label class="radio-option"><input type="radio" name="q4" value="CURIOUS"> 「挑戦的」「未知」などの言葉</label>
+          <label class="radio-option"><input type="radio" name="q4" value="CASUAL"> 値段と手軽さ</label>
+          <label class="radio-option"><input type="radio" name="q4" value="TRADITIONAL"> ブレンドで飲みやすいか</label>
+        </div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="form-group">
+        <h2 class="h3">Q5. あなたの性格に近いのは？</h2>
+        <div class="radio-group">
+          <label class="radio-option"><input type="radio" name="q5" value="SENSE"> 感性や直感を大事にする</label>
+          <label class="radio-option"><input type="radio" name="q5" value="ANALYTIC"> ロジカルに物事を考える</label>
+          <label class="radio-option"><input type="radio" name="q5" value="EMOTIONAL"> 気持ちの浮き沈みに敏感</label>
+          <label class="radio-option"><input type="radio" name="q5" value="CURIOUS"> 好奇心旺盛で新しいことが好き</label>
+          <label class="radio-option"><input type="radio" name="q5" value="CASUAL"> マイペースでのんびり屋</label>
+          <label class="radio-option"><input type="radio" name="q5" value="TRADITIONAL"> 安定やルーティンを重視</label>
+        </div>
+      </div>
+
+      <!-- Q6 -->
+      <div class="form-group">
+        <h2 class="h3">Q6. あなたが憧れるコーヒーの楽しみ方は？</h2>
+        <div class="radio-group">
+          <label class="radio-option"><input type="radio" name="q6" value="SENSE"> 世界観のある豆を選ぶ楽しみ</label>
+          <label class="radio-option"><input type="radio" name="q6" value="ANALYTIC"> テイスティングノートを記録する楽しみ</label>
+          <label class="radio-option"><input type="radio" name="q6" value="EMOTIONAL"> 心の状態に合わせて変える楽しみ</label>
+          <label class="radio-option"><input type="radio" name="q6" value="CURIOUS"> 毎回違う豆を試す楽しみ</label>
+          <label class="radio-option"><input type="radio" name="q6" value="CASUAL"> その時の気分で適当に選ぶ楽しみ</label>
+          <label class="radio-option"><input type="radio" name="q6" value="TRADITIONAL"> お気に入りの一杯を毎日同じ方法で</label>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-full">診断する</button>
+    </form>
+  </div>
+
+  <!-- 下部タブバー -->
+  <footer style="position:fixed;bottom:0;left:0;width:100%;background:var(--white);border-top:1px solid var(--gray-300);display:flex;justify-content:space-around;padding:0.5rem 0;z-index:10;">
+    <a href="index.html" style="flex:1;text-align:center;color:var(--coffee-primary);font-weight:600;">
+      <div>☕<div style="font-size:0.9em;">記録</div></div>
+    </a>
+    <a href="diagnosis.html" style="flex:1;text-align:center;">
+      <div>🧪<div style="font-size:0.9em;">診断</div></div>
+    </a>
+    <a href="result.html" style="flex:1;text-align:center;">
+      <div>📊<div style="font-size:0.9em;">傾向</div></div>
+    </a>
+    <a href="profile.html" style="flex:1;text-align:center;">
+      <div>👤<div style="font-size:0.9em;">自分</div></div>
+    </a>
+  </footer>
+
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
