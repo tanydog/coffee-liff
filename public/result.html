@@ -2,44 +2,44 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>診断結果</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>診断結果とおすすめ豆</title>
   <link rel="stylesheet" href="/styles/coffee-design.css" />
 </head>
-<body>
-  <div class="container">
-    <h1 class="h1">☕ あなたのコーヒータイプは…</h1>
-    <div id="resultsContainer" class="component-grid"></div>
+<body class="app">
+  <div class="shell">
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">INSIGHT REPORT</p>
+        <h1><span id="memberName">ゲスト</span>さんの味覚レポート</h1>
+        <p class="subtitle">診断結果から導き出したペルソナと、おすすめの豆・体験プランをご案内します。</p>
+      </div>
+      <div class="header-cta">
+        <a class="btn btn-secondary" href="diagnosis.html">診断を更新する</a>
+      </div>
+    </header>
+
+    <main class="app-main">
+      <section class="card">
+        <div class="card-header">
+          <h2>診断サマリー</h2>
+          <p class="body-sm muted">複数のペルソナが同率の場合は、すべての特徴を表示しています。</p>
+        </div>
+        <div id="resultsContainer" class="stack"></div>
+        <div id="feedback" class="feedback"></div>
+      </section>
+    </main>
   </div>
 
-  <!-- 下部タブバー -->
-  <footer style="position:fixed;bottom:0;left:0;width:100%;background:var(--white);border-top:1px solid var(--gray-300);display:flex;justify-content:space-around;padding:0.5rem 0;z-index:10;">
-    <a href="index.html" style="flex:1;text-align:center;color:var(--coffee-primary);font-weight:600;">
-      <div>☕<div style="font-size:0.9em;">記録</div></div>
-    </a>
-    <a href="diagnosis.html" style="flex:1;text-align:center;">
-      <div>🧪<div style="font-size:0.9em;">診断</div></div>
-    </a>
-    <a href="result.html" style="flex:1;text-align:center;">
-      <div>📊<div style="font-size:0.9em;">傾向</div></div>
-    </a>
-    <a href="profile.html" style="flex:1;text-align:center;">
-      <div>👤<div style="font-size:0.9em;">自分</div></div>
-    </a>
-  </footer>
+  <nav class="app-nav">
+    <a href="index.html">記録</a>
+    <a href="diagnosis.html">診断</a>
+    <a href="result.html" class="active">傾向</a>
+    <a href="profile.html">プロフィール</a>
+  </nav>
 
-  <!-- スクリプトの読み込み順を固定 -->
   <script src="/config.js" defer></script>
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js" defer></script>
-  <script src="/main-result.js" defer></script>
-
-  <!-- 任意: 設定チェック -->
-  <script defer>
-    window.addEventListener('DOMContentLoaded', () => {
-      if (!window.ENV || !window.ENV.LIFF?.DIAG || !window.ENV.API_BASE) {
-        console.warn('config.js の設定不足: ENV.LIFF.DIAG / ENV.API_BASE');
-      }
-    });
-  </script>
+  <script type="module" src="/scripts/pages/diagnosis-results.js" defer></script>
 </body>
 </html>

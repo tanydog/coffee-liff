@@ -2,66 +2,68 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>コーヒーログ記録</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>コーヒーログダッシュボード</title>
   <link rel="stylesheet" href="/styles/coffee-design.css" />
 </head>
-<body>
-  <div class="container" style="padding-bottom:90px;">
-    <!-- 新規記録フォーム -->
-    <form id="coffeeForm" class="card" style="margin-top:1.5rem;">
-      <div class="form-group">
-        <label for="beanType" class="form-label">豆の種類</label>
-        <input type="text" id="beanType" class="form-input" required placeholder="例: コロンビア・スプレモ" />
+<body class="app">
+  <div class="shell">
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">COFFEE JOURNEY</p>
+        <h1>ようこそ、<span id="memberName">ゲスト</span>さん</h1>
+        <p class="subtitle">1杯ごとの気づきを残して、あなたの味覚トレンドを育てましょう。</p>
       </div>
-      <div class="form-group">
-        <label for="taste" class="form-label">味の感想</label>
-        <input type="text" id="taste" class="form-input" required placeholder="例: フルーティな酸味で朝にぴったり" />
+      <div class="header-cta">
+        <a class="btn btn-secondary" href="diagnosis.html">診断を受ける</a>
       </div>
-      <div class="form-group">
-        <label for="amount" class="form-label">飲んだ量（ml）</label>
-        <input type="number" id="amount" class="form-input" min="1" required placeholder="例: 180" />
-      </div>
-      <button type="submit" class="btn btn-primary btn-full">記録する</button>
-    </form>
+    </header>
 
-    <p id="result" class="body" style="margin-top:1rem;"></p>
+    <main class="app-main">
+      <section class="card highlight">
+        <div class="card-header">
+          <h2>今日の一杯を記録</h2>
+          <p>豆の種類・味わい・量を記録して、嗜好の変化を把握しましょう。</p>
+        </div>
+        <form id="logForm" class="form-grid">
+          <label class="field">
+            <span>豆の種類</span>
+            <input type="text" name="beanType" placeholder="例: コロンビア・スプレモ" required />
+          </label>
+          <label class="field">
+            <span>味の感想</span>
+            <textarea name="taste" rows="3" placeholder="香りや味わいのメモを自由に残しましょう" required></textarea>
+          </label>
+          <label class="field">
+            <span>飲んだ量 (ml)</span>
+            <input type="number" name="amount" min="1" max="2000" placeholder="180" required />
+          </label>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">記録を保存する</button>
+          </div>
+        </form>
+        <div id="feedback" class="feedback"></div>
+      </section>
 
-    <!-- 記録一覧 -->
-    <header class="h2" style="margin-bottom:1rem;">☕️ ログ記録</header>
-    <div id="logsList"></div>
+      <section class="card">
+        <div class="card-header">
+          <h2>最近のログ</h2>
+          <p class="body-sm muted">トレンドを把握するため、直近の50件までを表示しています。</p>
+        </div>
+        <div id="logList" class="stack"></div>
+      </section>
+    </main>
   </div>
 
-  <!-- 下部タブバー -->
-  <footer style="position:fixed;bottom:0;left:0;width:100%;background:var(--white);border-top:1px solid var(--gray-300);display:flex;justify-content:space-around;padding:0.5rem 0;z-index:10;">
-    <a href="index.html" style="flex:1;text-align:center;color:var(--coffee-primary);font-weight:600;">
-      <div>☕<div style="font-size:0.9em;">記録</div></div>
-    </a>
-    <a href="diagnosis.html" style="flex:1;text-align:center;">
-      <div>🧪<div style="font-size:0.9em;">診断</div></div>
-    </a>
-    <a href="result.html" style="flex:1;text-align:center;">
-      <div>📊<div style="font-size:0.9em;">傾向</div></div>
-    </a>
-    <a href="profile.html" style="flex:1;text-align:center;">
-      <div>👤<div style="font-size:0.9em;">自分</div></div>
-    </a>
-  </footer>
+  <nav class="app-nav">
+    <a href="index.html" class="active">記録</a>
+    <a href="diagnosis.html">診断</a>
+    <a href="result.html">傾向</a>
+    <a href="profile.html">プロフィール</a>
+  </nav>
 
-  <!-- ① config を最優先で読む（gitignore 対象） -->
   <script src="/config.js" defer></script>
-
-  <!-- ② LIFF SDK → ③ 画面ロジック(main.js) -->
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js" defer></script>
-  <script src="/main.js" defer></script>
-
-  <!-- （任意）config 未ロード時の簡易警告 -->
-  <script defer>
-    window.addEventListener('DOMContentLoaded', () => {
-      if (!window.ENV || !window.ENV.LIFF?.LOG || !window.ENV.API_BASE) {
-        console.warn('config.js の設定不足: ENV.LIFF.LOG / ENV.API_BASE');
-      }
-    });
-  </script>
+  <script type="module" src="/scripts/pages/log-book.js" defer></script>
 </body>
 </html>
