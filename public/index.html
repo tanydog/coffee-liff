@@ -58,8 +58,10 @@
   <!-- （任意）config 未ロード時の簡易警告 -->
   <script defer>
     window.addEventListener('DOMContentLoaded', () => {
-      if (!window.ENV || !window.ENV.LIFF?.LOG || !window.ENV.API_BASE) {
-        console.warn('config.js の設定不足: ENV.LIFF.LOG / ENV.API_BASE');
+      const env = window.ENV || {};
+      const hasLiffId = !!(env?.LIFF?.LOG || env?.LIFF_ID);
+      if (!hasLiffId || !env?.API_BASE) {
+        console.warn('config.js の設定不足: ENV.LIFF.LOG または ENV.LIFF_ID / ENV.API_BASE');
       }
     });
   </script>
