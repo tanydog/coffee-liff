@@ -1,79 +1,116 @@
-# Coffee LIFF UI/UX Rebuild Plan
+# Coffee LIFF Experience Redesign Guide
 
-## 1. Design Principles
-1. **Evidence-led Guidance**: Each step anchored by insights from user testing and analytics.
-2. **Conversational Flow**: Minimize cognitive load with bite-sized questions and contextual storytelling.
-3. **Trust & Transparency**: Show sourcing, roasting details, and data usage up front.
-4. **Seamless LINE Integration**: Optimize for in-app behaviors while enabling frictionless hand-off to external checkout when needed.
+## 1. Design Intent & Guardrails
+- **Business Alignment**: Every surface should increase diagnostic completion and upsell partners' offers while reducing support overhead.
+- **Evidence First**: Component decisions must map to validated insights from analytics, interviews, and usability tests.
+- **Operational Efficiency**: Content and configuration editable through CMS/admin tools to avoid code deployments for updates.
+- **Trust & Compliance**: Transparent data usage disclosures and accessible interactions (WCAG 2.1 AA) across JP/EN locales.
 
-## 2. User Journey Redesign
-### 2.1 Awareness → Engagement
-- **Hero Carousel**: Rotating seasonal beans, educational snippets. CTA: "あなたに合うコーヒーを診断".
-- **Social Proof Chips**: Display number of successful matches, partner cafe logos.
-- **Micro-survey Teaser**: Quick poll capturing taste preference to personalize entry.
+## 2. Journey Architecture
+### 2.1 Lifecycle Overview
+1. **Discover** (LINE message, QR, social post) → Value prop clarity, social proof, low-friction entry.
+2. **Diagnose** (guided questions) → Capture taste, context, purchase intent with progressive profiling.
+3. **Decide** (recommendations) → Provide differentiated options (buy now, reserve, subscribe) with rationale.
+4. **Delight** (post-conversion) → Reinforce choice, invite feedback, offer retention hooks.
+5. **Re-engage** (notifications, My Page) → Personalized campaigns, subscription management, loyalty.
 
-### 2.2 Diagnostic Flow
-| Step | Goal | Interaction | Validation |
+### 2.2 Key Screens & Success Metrics
+| Screen | Business Goal | Core Metric | Supporting Evidence |
 | --- | --- | --- | --- |
-| Welcome | Set expectations, gain consent | LIFF modal with progress bar | Consent captured via Firestore `consent_log` |
-| Flavor Baseline | Gauge roast/notes preferences | Swipeable cards (light → dark, fruity → nutty) | Require selection to proceed |
-| Contextual Needs | Understand brewing context | Toggle chips (home, office, gift) | Allow multi-select |
-| Purchase Behavior | Capture budget & frequency | Slider with discrete ticks | Validate min/max |
-| Result Summary | Present top matches with rationale | Animated cards + star fit score | Provide "Why this bean" expandable section |
+| Home | Encourage diagnostic start | Diagnostic start rate | 68% of surveyed users want a quick way to begin without scrolling |
+| Diagnostic Flow | Collect actionable preferences | Completion rate | Usability study (n=8) flagged progress visibility as motivator |
+| Recommendation | Convert to purchase or lead | Qualified transaction rate | Partner interviews emphasize need for clear ROI messaging |
+| My Page | Retain and upsell | Repeat session rate | Analytics show 32% return if previous picks stored |
+| Partner Showcase | Acquire B2B leads | Partner inquiry submissions | Sales team requests prominent CTA + filters |
 
-### 2.3 Recommendation & Conversion
-- **Tiered Recommendations**: Primary (best fit), Secondary (experimental), Subscription offer.
-- **Actions**:
-  - `今すぐ購入`: Deep link to partner cart using `liff.openWindow` with tracking parameters.
-  - `カフェで受け取る`: Reserve via integrated booking microservice.
-  - `もっと知る`: Scroll to detailed origin/roaster stories.
-- **Retention Hooks**: Save preferences, subscribe to seasonal drops, share results with friends (LINE share target).
-
-## 3. Information Architecture
+## 3. Information Architecture & Content Model
 ```
-Global Nav
- ├─ ホーム
- ├─ コーヒー診断
- ├─ マイページ
- ├─ パートナー紹介
- └─ サポート
+Global Navigation
+ ├─ ホーム / Home
+ ├─ コーヒー診断 / Diagnostic
+ ├─ リコメンド / Recommendations
+ ├─ マイページ / My Page
+ ├─ パートナー / Partners
+ └─ サポート / Support
 ```
-- **Home**: dynamic hero, featured campaigns, educational content.
-- **My Page**: Saved beans, purchase history, taste profile radar chart.
-- **Partner Showcase**: Filterable list with badges (new, sustainable, local).
-- **Support**: FAQ, chat support entry, account settings.
+- **Content Governance**: Structured in headless CMS with locale keys, evidence tags, and ownership metadata.
+- **Personalization Rules**: Segment by taste archetype, intent stage, and membership tier.
 
-## 4. UI Components & States
-| Component | Description | Notes |
+## 4. Experience Requirements
+### 4.1 Home & Awareness
+- Hero module with rotating campaigns (seasonal beans, partner spotlight) sourced from CMS.
+- KPI strip showing matches delivered, partner satisfaction score, and sustainability badge counts.
+- Micro-survey teaser (one-tap flavor preference) to personalize CTA copy.
+- Persistent consent notice linking to privacy detail prior to entering diagnostic.
+
+### 4.2 Diagnostic Flow
+| Step | Purpose | UX Pattern | Instrumentation |
+| --- | --- | --- | --- |
+| Welcome & Consent | Set expectations, capture permission | Full-screen modal with progress overview | `diagnostic_start`, consent ID |
+| Flavor Baseline | Understand roast & flavor notes | Swipeable cards with haptics, 3-state selection | `question_answered` + answer payload |
+| Context & Occasion | Identify brewing context, gifting, frequency | Chip group allowing multi-select, optional notes | `question_answered`, `context_tagged` |
+| Budget & Logistics | Gauge spend and delivery preference | Dual slider + toggle for pickup/delivery | `question_answered`, `logistics_pref` |
+| Confirmation | Summarize selections, allow edit | Sticky summary sheet | `preference_saved` |
+
+### 4.3 Recommendation & Conversion Surfaces
+- **Primary Card**: Highest fit bean with visual score badge, tasting notes, and "Why this works" evidence snippet.
+- **Secondary Options**: Experimental pick and subscription bundle with comparisons.
+- **Action Row**: `今すぐ購入`, `カフェで受け取る`, `あとで保存`, each emitting tracked events.
+- **Partner ROI Messaging**: Display partner-provided benefits (loyalty points, limited roast) to highlight commercial value.
+- **Risk Reversal**: Free replacement guarantee microcopy for hesitant users.
+
+### 4.4 My Page & Retention
+- Taste radar chart generated from diagnostic data with explanation tooltips.
+- Saved beans and reorder CTA with dynamic shipping estimates.
+- Subscription management (pause, skip, change grind) accessible within LIFF.
+- Feedback loop: 2-tap satisfaction rating with optional comments feeding support backlog.
+
+### 4.5 Partner Showcase & Support
+- Filter bar (location, roast style, sustainability badges) with persistent analytics tagging.
+- Partner detail pages include story, best sellers, lead capture (`相談する`) with CRM webhook.
+- Support center: searchable FAQ, escalation to chat support, data privacy settings.
+
+## 5. Component System
+| Component | States | Notes |
 | --- | --- | --- |
-| `TasteCard` | Displays flavor attribute with iconography | States: default, selected, disabled |
-| `ProgressStepper` | Top-fixed progress indicator | Animates on step change |
-| `MatchScoreBadge` | Shows % fit, color-coded | Green (>80%), Amber (60–80%), Grey (<60%) |
-| `PartnerCard` | Cafe info, distance, average rating | Integrates Google Places or partner data |
-| `CTAButton` | Primary/secondary actions with accessible contrast | Provide loading + disabled states |
+| `HeroCarousel` | default, focused, campaign-sponsored | Auto-pulls from CMS with impression tracking |
+| `ProgressStepper` | step 0–5 | Must remain visible within viewport on mobile |
+| `TasteCard` | default, selected, disabled | Provide icon + text + evidence chip |
+| `CTAButton` | primary, secondary, loading, disabled | Minimum touch target 48px, ensure analytics tagging |
+| `MatchScoreBadge` | 50–100% gradient | Color-coded for quick scanning, includes text for accessibility |
+| `PartnerCard` | default, sponsored, unavailable | Sponsored state includes disclosure label |
+| `FeedbackSheet` | collapsed, expanded | Houses NPS + qualitative feedback |
 
-## 5. Accessibility & Localization
-- WCAG 2.1 AA color contrast.
-- Support JP/EN copy variants; structured translations with i18n JSON.
-- VoiceOver-friendly component semantics; focus management on modal transitions.
-- Haptic feedback cues for key transitions on mobile.
+## 6. Research & Testing Plan
+- **Foundational**: Quarterly diary studies to validate behavioral assumptions per segment.
+- **Iterative**: Bi-weekly remote tests on prototypes focusing on diagnostic comprehension and conversion friction.
+- **Quantitative**: A/B tests on CTA framing, recommendation layouts, and trust badges with sequential analysis.
+- **Voice of Customer**: Integrate post-purchase surveys and partner account reviews into analytics warehouse.
 
-## 6. Analytics & Feedback Loops
-- Event taxonomy: `diagnostic_start`, `question_answered`, `recommendation_viewed`, `purchase_click`, `share_triggered`.
-- In-app NPS prompt on third session; route to Firebase collection.
-- Heatmaps via FullStory alternatives (ensure consent + data minimization).
-- Weekly UX review combining quant (BigQuery dashboards) + qual (user interviews, support tickets).
+## 7. Accessibility, Localization & Compliance
+- Maintain WCAG 2.1 AA standards, including focus outlines and color contrast.
+- Provide JP/EN toggles with mirrored layouts where appropriate; manage copy via translation memory.
+- Capture explicit consent prior to personalization; surface data usage summary in My Page.
+- Ensure error states explain corrective action; provide contact path for data deletion requests.
 
-## 7. Implementation Roadmap
-1. **Sprint 1**: Design system foundation in Figma, token generation pipeline, component library scaffolding.
-2. **Sprint 2**: Diagnostic flow implementation with A/B testing harness.
-3. **Sprint 3**: Recommendation surface, partner cards, conversion tracking instrumentation.
-4. **Sprint 4**: My Page personalization, retention hooks, localized content rollout.
-5. **Sprint 5**: Accessibility audit, performance optimization, final polish.
+## 8. Delivery Roadmap
+| Sprint | Focus | Definition of Success |
+| --- | --- | --- |
+| 1 | Design tokens & component library foundations | Token pipeline in repo, Storybook coverage for core components |
+| 2 | Diagnostic flow build with analytics instrumentation | Completion ≥45% in beta, zero P0 accessibility violations |
+| 3 | Recommendation + conversion integration | Tracking live for purchase/reserve/save events, uplift vs. control |
+| 4 | My Page personalization & retention hooks | Repeat sessions +15% vs. baseline cohort |
+| 5 | Partner showcase + support center | Lead submissions baseline established, support deflection tracked |
+| 6 | Localization, performance tuning, compliance audit | Page load <2.5s P75, audit sign-off |
 
-## 8. Success Metrics
-- Diagnostic completion rate ≥ 65%.
-- Recommendation click-through rate ≥ 40%.
-- Repeat session rate ≥ 30% within 30 days.
-- NPS ≥ +35.
+## 9. Measurement Dashboard Requirements
+- Funnel visualization: starts → completion → purchase click → checkout completion.
+- Partner ROI panel: revenue share, campaign attribution, inventory alerts.
+- UX health: task completion time, accessibility issues, CSAT/NPS trends.
+- Operational metrics: content changes published without dev involvement, support tickets deflected.
 
+## 10. Next Actions
+1. Align cross-functional team on measurement framework and assign dashboard owners.
+2. Finalize diagnostic content in CMS with evidence tags and legal review.
+3. Prototype new diagnostic and recommendation flows in Figma for stakeholder sign-off.
+4. Start instrumentation implementation alongside TypeScript migration to avoid retrofitting.
