@@ -12,6 +12,7 @@
 ## 主要ドキュメント
 - [プロダクト戦略リニューアル](docs/product_strategy.md)
 - [UI/UX オーバーホール計画](docs/ui_ux_overhaul.md)
+- [マージコンフリクト解消ガイド](docs/merge_conflict_guide.md)
 
 ## 技術ハイライト
 - **モジュール型フロントエンド**: `public/scripts` をコア/サービス/UI/ページ層に分割。LIFF 初期化や API クライアントを共通化し、ページ単位の改善や AB テストがしやすい構造にしました。
