@@ -1,20 +1,24 @@
-# coffee-liff
+# Coffee LIFF
 
-## Product Redesign Overview
-This repository hosts the Coffee LIFF (LINE Front-end Framework) experience. The current initiative focuses on rebuilding the product with an evidence-based business and UX strategy to unlock monetization and operational efficiency.
+Coffee LIFF is a LINE-based concierge that matches coffee lovers with partner cafes and roasters while equipping operators with monetizable insights. This repository now hosts the refreshed business blueprint and experience guidelines grounded in market data, operational efficiency, and revenue potential.
 
-### Strategic Documentation
-- [Product Strategy Redesign](docs/product_strategy.md)
-- [UI/UX Rebuild Plan](docs/ui_ux_overhaul.md)
+## Strategic Overview
+- **Business Blueprint**: Defines objectives, KPIs, monetization levers, and system architecture needed to scale a sustainable platform.
+- **Experience Redesign**: Rebuilds the LIFF UI/UX with evidence-backed flows that drive conversion, retention, and partner value.
 
-### Key Goals
-1. Align the product with validated customer needs across consumers, partner cafes, and corporate clients.
-2. Establish sustainable revenue via SaaS subscriptions, affiliate commissions, and data services.
-3. Re-architect the system for maintainability, analytics visibility, and multi-tenant management.
-4. Deliver an accessible, high-conversion LIFF experience with measurable UX improvements.
+### Core Objectives
+1. Align consumer, partner, and corporate needs through validated jobs-to-be-done and measurable KPIs.
+2. Establish durable revenue streams via tiered SaaS subscriptions, affiliate commissions, sponsorships, and data insights.
+3. Optimize operations with modular architecture, centralized configuration, and automated analytics.
+4. Deliver an accessible, high-conversion LIFF journey that reinforces trust and repeat engagement.
 
-### Next Steps
-- Review and sign off on the strategic direction.
-- Prioritize roadmap execution, beginning with the modular frontend migration and centralized configuration service.
-- Set up cross-functional rituals to track KPIs, user feedback, and partner satisfaction.
+### Key References
+- [Business & Product Blueprint](docs/product_strategy.md)
+- [Experience Redesign Guide](docs/ui_ux_overhaul.md)
 
+## Implementation Next Steps
+1. Approve resourcing for the foundation phase (frontend modularization, config service, analytics pipeline).
+2. Stand up measurement dashboards covering funnel health, partner ROI, and UX quality.
+3. Finalize CMS-driven content, localization strategy, and consent framework.
+4. Begin TypeScript migration alongside component library development with analytics instrumentation baked in.
+5. Roll out the new usage insights API and retention-plan UI to validate monetization experiments with pilot partners.
