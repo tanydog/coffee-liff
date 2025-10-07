@@ -21,4 +21,3 @@ Coffee LIFF is a LINE-based concierge that matches coffee lovers with partner ca
 2. Stand up measurement dashboards covering funnel health, partner ROI, and UX quality.
 3. Finalize CMS-driven content, localization strategy, and consent framework.
 4. Begin TypeScript migration alongside component library development with analytics instrumentation baked in.
-5. Roll out the new usage insights API and retention-plan UI to validate monetization experiments with pilot partners.
