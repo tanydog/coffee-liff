@@ -1,39 +1,34 @@
 const { admin } = require("../firebase");
-const { createHttpError } = require("../utils/http-error");
 
 class LogService {
-  constructor({ logRepository }) {
+  constructor({ logRepository, logger }) {
     this.logRepository = logRepository;
+    this.logger = logger;
   }
 
-  async recordLog(userPayload, requestBody) {
-    const { beanType, taste } = requestBody || {};
-    let { amount, displayName } = requestBody || {};
-
-    if (!beanType || !taste) {
-      throw createHttpError(400, "beanType_and_taste_required");
-    }
-
-    amount = parseInt(amount, 10);
-    if (!Number.isFinite(amount) || amount <= 0 || amount > 2000) {
-      throw createHttpError(400, "amount_out_of_range");
-    }
-
+  async recordLog(userPayload, logInput) {
     await this.logRepository.add({
       userId: userPayload.sub,
-      displayName: displayName || userPayload.name || null,
+      displayName: logInput.displayName || userPayload.name || null,
       pictureUrl: userPayload.picture || null,
-      beanType,
-      taste,
-      amount,
+      beanType: logInput.beanType,
+      taste: logInput.taste,
+      amount: logInput.amount,
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    this.logger?.info("log_recorded", {
+      userId: userPayload.sub,
+      beanType: logInput.beanType,
     });
 
     return { ok: true };
   }
 
   async listLogs(userPayload) {
-    return this.logRepository.listByUser(userPayload.sub, 50);
+    const logs = await this.logRepository.listByUser(userPayload.sub, 50);
+    this.logger?.info("log_listed", { userId: userPayload.sub, count: logs.length });
+    return logs;
   }
 }
 

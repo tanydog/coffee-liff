@@ -1,14 +1,14 @@
 const line = require("@line/bot-sdk");
-const { asyncHandler } = require("../middleware/async-handler");
-
-function registerLineWebhookRoute(app, container) {
-  const { lineConfig, services } = container;
+function registerLineWebhookRoute(app, container, wrap) {
+  const { lineConfig } = container;
 
   app.post(
     "/webhook",
     line.middleware(lineConfig),
-    asyncHandler(async (req, res) => {
+    wrap(async ({ container: appContainer, req, res, requestContext }) => {
+      const { services } = appContainer;
       const events = req.body.events || [];
+      requestContext.logger?.info("line_webhook_received", { count: events.length });
       const responses = await Promise.all(
         events.map(async (event) => {
           if (event.type !== "message" || event.message.type !== "text") {
@@ -16,6 +16,7 @@ function registerLineWebhookRoute(app, container) {
           }
           const userId = event.source.userId;
           const profile = await services.lineClient.getProfile(userId);
+          requestContext.logger?.info("line_webhook_profile", { userId });
           await services.userService.upsertProfile(userId, {
             displayName: profile.displayName,
             pictureUrl: profile.pictureUrl,

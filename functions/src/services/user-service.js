@@ -1,8 +1,9 @@
 const { admin } = require("../firebase");
 
 class UserService {
-  constructor({ db }) {
+  constructor({ db, logger }) {
     this.collection = db.collection("users");
+    this.logger = logger;
   }
 
   async upsertProfile(userId, profile) {
@@ -21,7 +22,9 @@ class UserService {
         { createdAt: admin.firestore.FieldValue.serverTimestamp() },
         { merge: true }
       );
+      this.logger?.info("user_created", { userId });
     }
+    this.logger?.info("user_profile_updated", { userId });
   }
 }
 

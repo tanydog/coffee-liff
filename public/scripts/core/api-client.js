@@ -23,12 +23,24 @@ export class ApiClient {
       body: body ? JSON.stringify(body) : undefined,
     });
 
+    const contentType = response.headers.get("content-type") || "";
+
     if (!response.ok) {
+      if (contentType.includes("application/json")) {
+        const data = await response.json();
+        const error = new Error(data.error || "api_error");
+        error.status = response.status;
+        if (data.requestId) {
+          error.requestId = data.requestId;
+        }
+        throw error;
+      }
       const text = await response.text();
-      throw new Error(`API ${response.status}: ${text}`);
+      const error = new Error(`API ${response.status}: ${text}`);
+      error.status = response.status;
+      throw error;
     }
 
-    const contentType = response.headers.get("content-type") || "";
     if (contentType.includes("application/json")) {
       return response.json();
     }

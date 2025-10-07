@@ -1,37 +1,32 @@
-import { appConfig, assertConfig } from "../core/env.js";
-import { LiffClient } from "../core/liff-client.js";
-import { ApiClient } from "../core/api-client.js";
 import { renderNotice, clearNotice } from "../ui/feedback.js";
 import { withButtonLoading } from "../ui/loading.js";
 import { qs } from "../utils/dom.js";
 import { renderLogList } from "../features/logbook.js";
+import { bootstrapSecurePage } from "../app/bootstrap.js";
+import { handleBootstrapError, updateWelcomeName } from "../app/page.js";
 
 async function bootstrap() {
+  const feedback = qs("#feedback");
+  let app;
   try {
-    assertConfig(["liff.log", "apiBase"]);
+    app = await bootstrapSecurePage({ liffKey: "log" });
   } catch (error) {
-    renderNotice(qs("#feedback"), {
-      variant: "error",
-      title: "設定エラー",
-      message: "必要な接続情報が設定されていません。管理者にお問い合わせください。",
+    handleBootstrapError(error, {
+      feedbackEl: feedback,
+      missingConfigMessage: "必要な接続情報が設定されていません。管理者にお問い合わせください。",
     });
-    throw error;
   }
 
-  const liffClient = new LiffClient({ liffId: appConfig.liff.log });
-  const api = new ApiClient({ baseUrl: appConfig.apiBase, tokenProvider: () => liffClient.getIdToken() });
+  if (!app) return;
 
-  await liffClient.ensureLogin();
-  const profile = await liffClient.getProfile();
+  const { apiClient, profile } = app;
+  const api = apiClient;
 
   const form = qs("#logForm");
-  const feedback = qs("#feedback");
   const listContainer = qs("#logList");
   const summaryName = qs("#memberName");
 
-  if (summaryName && profile?.displayName) {
-    summaryName.textContent = profile.displayName;
-  }
+  updateWelcomeName(summaryName, profile);
 
   async function refresh() {
     renderNotice(listContainer, { variant: "info", message: "読み込み中です..." });
@@ -40,10 +35,11 @@ async function bootstrap() {
       renderLogList(listContainer, logs);
     } catch (error) {
       console.error(error);
+      const errorId = error?.requestId ? ` (エラーID: ${error.requestId})` : "";
       renderNotice(listContainer, {
         variant: "error",
         title: "取得に失敗しました",
-        message: "ネットワーク環境を確認し、再読み込みしてください。",
+        message: `ネットワーク環境を確認し、再読み込みしてください。${errorId}`,
       });
     }
   }
@@ -83,10 +79,11 @@ async function bootstrap() {
         await refresh();
       } catch (error) {
         console.error(error);
+        const errorId = error?.requestId ? ` (エラーID: ${error.requestId})` : "";
         renderNotice(feedback, {
           variant: "error",
           title: "保存できませんでした",
-          message: "通信状況を確認して、再度お試しください。",
+          message: `通信状況を確認して、再度お試しください。${errorId}`,
         });
       }
     });

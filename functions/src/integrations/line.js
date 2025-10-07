@@ -1,7 +1,7 @@
 const fetch = globalThis.fetch || require("node-fetch");
 const { createHttpError } = require("../utils/http-error");
 
-async function verifyLineIdToken(idToken, channelId) {
+async function verifyLineIdToken(idToken, channelId, logger) {
   if (!idToken) {
     throw createHttpError(401, "missing_id_token");
   }
@@ -18,6 +18,10 @@ async function verifyLineIdToken(idToken, channelId) {
 
   if (!response.ok) {
     const text = await response.text();
+    logger?.warn("line_token_verification_failed", {
+      status: response.status,
+      body: text,
+    });
     throw createHttpError(401, `line_verification_failed:${response.status}:${text}`);
   }
 
@@ -25,6 +29,7 @@ async function verifyLineIdToken(idToken, channelId) {
   if (!payload.sub) {
     throw createHttpError(401, "line_missing_sub");
   }
+  logger?.info("line_token_verified", { userId: payload.sub });
   return payload;
 }
 

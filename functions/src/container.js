@@ -1,6 +1,7 @@
 const line = require("@line/bot-sdk");
 const { config } = require("./config");
 const { db } = require("./firebase");
+const { createLogger } = require("./app/logger");
 const { LogRepository } = require("./repositories/log-repository");
 const { DiagnosisRepository } = require("./repositories/diagnosis-repository");
 const { RecommendationRepository } = require("./repositories/recommendation-repository");
@@ -11,6 +12,7 @@ const { RecommendationService } = require("./services/recommendation-service");
 const { UserService } = require("./services/user-service");
 
 function createContainer() {
+  const logger = createLogger("coffee-liff");
   const lineConfig = {
     channelAccessToken: config.line.channelAccessToken,
     channelSecret: config.line.channelSecret,
@@ -23,11 +25,11 @@ function createContainer() {
   };
 
   const services = {
-    authService: new AuthService({ channelId: config.line.channelId }),
-    logService: new LogService({ logRepository: repositories.logRepository }),
-    diagnosisService: new DiagnosisService({ diagnosisRepository: repositories.diagnosisRepository }),
-    recommendationService: new RecommendationService({ recommendationRepository: repositories.recommendationRepository }),
-    userService: new UserService({ db }),
+    authService: new AuthService({ channelId: config.line.channelId, logger: logger.child("auth") }),
+    logService: new LogService({ logRepository: repositories.logRepository, logger: logger.child("log") }),
+    diagnosisService: new DiagnosisService({ diagnosisRepository: repositories.diagnosisRepository, logger: logger.child("diagnosis") }),
+    recommendationService: new RecommendationService({ recommendationRepository: repositories.recommendationRepository, logger: logger.child("recommendation") }),
+    userService: new UserService({ db, logger: logger.child("user") }),
     lineClient: new line.Client(lineConfig),
   };
 
@@ -36,6 +38,7 @@ function createContainer() {
     db,
     services,
     lineConfig,
+    logger,
   };
 }
 

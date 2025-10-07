@@ -1,10 +1,9 @@
-import { appConfig, assertConfig } from "../core/env.js";
-import { LiffClient } from "../core/liff-client.js";
-import { ApiClient } from "../core/api-client.js";
 import { renderNotice, clearNotice } from "../ui/feedback.js";
 import { withButtonLoading } from "../ui/loading.js";
 import { qs, createElement } from "../utils/dom.js";
 import { questions } from "../features/diagnosis-questions.js";
+import { bootstrapSecurePage } from "../app/bootstrap.js";
+import { handleBootstrapError, updateWelcomeName } from "../app/page.js";
 
 function renderQuestions(container) {
   container.innerHTML = "";
@@ -51,28 +50,23 @@ async function bootstrap() {
   const questionsContainer = qs("#questions");
   const feedback = qs("#feedback");
 
+  let app;
   try {
-    assertConfig(["liff.diagnosis", "apiBase"]);
+    app = await bootstrapSecurePage({ liffKey: "diagnosis" });
   } catch (error) {
-    renderNotice(feedback, {
-      variant: "error",
-      title: "設定エラー",
-      message: "診断を開始できません。設定を確認してください。",
+    handleBootstrapError(error, {
+      feedbackEl: feedback,
+      missingConfigMessage: "診断を開始できません。設定を確認してください。",
     });
-    throw error;
   }
+
+  if (!app) return;
+
+  const { apiClient, profile } = app;
+  const api = apiClient;
 
   renderQuestions(questionsContainer);
-
-  const liffClient = new LiffClient({ liffId: appConfig.liff.diagnosis });
-  const api = new ApiClient({ baseUrl: appConfig.apiBase, tokenProvider: () => liffClient.getIdToken() });
-
-  await liffClient.ensureLogin();
-  const profile = await liffClient.getProfile();
-  if (profile?.displayName) {
-    const heroName = qs("#memberName");
-    if (heroName) heroName.textContent = profile.displayName;
-  }
+  updateWelcomeName(qs("#memberName"), profile);
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -122,10 +116,11 @@ async function bootstrap() {
         }, 1400);
       } catch (error) {
         console.error(error);
+        const errorId = error?.requestId ? ` (エラーID: ${error.requestId})` : "";
         renderNotice(feedback, {
           variant: "error",
           title: "診断結果を保存できませんでした",
-          message: "通信状況を確認して、再度お試しください。",
+          message: `通信状況を確認して、再度お試しください。${errorId}`,
         });
       }
     });

@@ -1,10 +1,13 @@
 class RecommendationService {
-  constructor({ recommendationRepository }) {
+  constructor({ recommendationRepository, logger }) {
     this.recommendationRepository = recommendationRepository;
+    this.logger = logger;
   }
 
   async listRecommendations() {
-    return this.recommendationRepository.getAll();
+    const map = (await this.recommendationRepository.getAll()) || {};
+    this.logger?.info("recommendations_loaded", { count: Object.keys(map).length });
+    return map;
   }
 }
 

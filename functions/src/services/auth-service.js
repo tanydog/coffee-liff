@@ -2,8 +2,9 @@ const { verifyLineIdToken } = require("../integrations/line");
 const { createHttpError } = require("../utils/http-error");
 
 class AuthService {
-  constructor({ channelId }) {
+  constructor({ channelId, logger }) {
     this.channelId = channelId;
+    this.logger = logger;
   }
 
   async requireUserFromRequest(req) {
@@ -12,7 +13,7 @@ class AuthService {
     if (!token) {
       throw createHttpError(401, "missing_bearer_token");
     }
-    const payload = await verifyLineIdToken(token, this.channelId);
+    const payload = await verifyLineIdToken(token, this.channelId, this.logger);
     return payload;
   }
 }
