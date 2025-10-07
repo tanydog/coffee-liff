@@ -16,10 +16,6 @@ const typeData = {
   TRADITIONAL: { emoji: '🏠', name: 'トラディショナルブリュワー', tagline: '変わらない安心感、定番の美味しさ。' }
 };
 
-async function ensureLogin() {
-  await liff.init({ liffId: LIFF_ID });
-  if (!liff.isLoggedIn()) { liff.login(); throw new Error("redirecting"); }
-}
 function renderCards(container, types, beanMap) {
   container.innerHTML = "";
   types.forEach((type) => {
@@ -58,9 +54,14 @@ async function renderResults() {
   container.innerHTML = '<div class="body">読み込み中...</div>';
 
   try {
-    await ensureLogin();
-    const idToken = liff.getIDToken();
-    if (!idToken) throw new Error("missing idToken");
+    const session = await LiffHelper.ensureLogin({
+      liffId: LIFF_ID,
+      redirectUri: window.location.href
+    });
+    if (session.redirected) return;
+    if (!session.loggedIn || !session.idToken) throw new Error("missing idToken");
+
+    const idToken = session.idToken;
 
     const res = await fetch(`${API_BASE}/diagnosis`, { headers: { Authorization: `Bearer ${idToken}` } });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -79,7 +80,6 @@ async function renderResults() {
 
     renderCards(container, types, beanMap);
   } catch (err) {
-    if (String(err).includes("redirecting")) return;
     console.error("診断表示エラー:", err);
     container.innerHTML = '<p class="body">診断結果の取得に失敗しました。</p>';
   }

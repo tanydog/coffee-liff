@@ -146,10 +146,14 @@ async function renderResults() {
   container.innerHTML = '<div class="body">読み込み中...</div>';
 
   try {
-    await liff.init({ liffId: LIFF_ID });
-    if (!liff.isLoggedIn()) { liff.login(); return; }
-    const idToken = liff.getIDToken();
-    if (!idToken) throw new Error("missing idToken");
+    const session = await LiffHelper.ensureLogin({
+      liffId: LIFF_ID,
+      redirectUri: window.location.href
+    });
+    if (session.redirected) return;
+    if (!session.loggedIn || !session.idToken) throw new Error("missing idToken");
+
+    const idToken = session.idToken;
 
     const [diagRes, recRes, insightRes] = await Promise.all([
       fetch(`${API_BASE}/diagnosis`, { headers: { Authorization: `Bearer ${idToken}` } }),

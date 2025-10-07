@@ -3,16 +3,6 @@
 const env = window.ENV || {};
 const LIFF_ID = env?.LIFF?.DIAG || env?.LIFF_ID;
 
-async function ensureLogin() {
-  await liff.init({ liffId: LIFF_ID });
-  if (!liff.isLoggedIn()) {
-    document.getElementById('notice').style.display = 'flex';
-    // 直接ログインへ誘導（必要ならボタンを別で用意してもOK）
-    liff.login();
-    throw new Error('redirecting');
-  }
-}
-
 function maskUserId(uid) {
   if (!uid) return '';
   if (uid.length <= 10) return uid;
@@ -26,7 +16,15 @@ async function loadProfile() {
   const tokenInfoEl = document.getElementById('tokenInfo');
 
   try {
-    await ensureLogin();
+    const session = await LiffHelper.ensureLogin({
+      liffId: LIFF_ID,
+      redirectUri: window.location.href
+    });
+    if (session.redirected) return;
+    if (!session.loggedIn) {
+      document.getElementById('notice').style.display = 'flex';
+      return;
+    }
 
     const prof = await liff.getProfile();
     nameEl.textContent = prof.displayName || '不明';
@@ -37,7 +35,6 @@ async function loadProfile() {
     const idToken = liff.getIDToken();
     tokenInfoEl.textContent = idToken ? `IDトークン: 取得済み` : 'IDトークン: 未取得';
   } catch (e) {
-    if (String(e).includes('redirecting')) return;
     console.error(e);
     document.getElementById('notice').style.display = 'flex';
   }
