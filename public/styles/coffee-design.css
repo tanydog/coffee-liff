@@ -158,7 +158,7 @@ body {
 }
 
 /* Card */
-.card {
+.card { 
     background-color: var(--white);
     border-radius: var(--radius-xl);
     padding: var(--space-6);
@@ -283,6 +283,135 @@ body {
     border-left: 4px solid var(--error);
 }
 
+/* Metrics & Insights */
+.metric-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+}
+
+.metric-card {
+    background-color: var(--coffee-cream);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    border: 1px solid var(--coffee-light);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.metric-label {
+    font-size: var(--font-size-sm);
+    color: var(--gray-600);
+    font-weight: 500;
+}
+
+.metric-value {
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    color: var(--coffee-primary);
+    letter-spacing: -0.02em;
+}
+
+.metric-subtext {
+    font-size: var(--font-size-sm);
+    color: var(--gray-500);
+}
+
+.metric-section {
+    margin-top: var(--space-4);
+}
+
+.trend-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.trend-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.trend-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: var(--font-size-sm);
+    color: var(--gray-600);
+}
+
+.progress-bar {
+    height: 10px;
+    border-radius: var(--radius-full);
+    background-color: var(--gray-200);
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--coffee-secondary), var(--coffee-primary));
+    border-radius: var(--radius-full);
+    transition: width 0.3s ease;
+}
+
+.bean-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.bean-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-lg);
+    background-color: var(--gray-100);
+    border: 1px solid var(--gray-200);
+    font-size: var(--font-size-sm);
+}
+
+.bean-count {
+    font-weight: 600;
+    color: var(--coffee-secondary);
+}
+
+.engagement-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--space-4);
+}
+
+.plan-card {
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    background-color: var(--gray-100);
+}
+
+.plan-price {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--coffee-secondary);
+}
+
+.plan-feature {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+}
+
+.plan-feature span:first-child {
+    font-size: var(--font-size-base);
+}
+
 /* Loading */
 .loading {
     display: inline-block;
@@ -311,6 +440,9 @@ body {
     }
     .btn {
         padding: var(--space-4) var(--space-6);
+    }
+    .metric-grid {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     }
 }
 

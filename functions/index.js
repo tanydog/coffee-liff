@@ -19,6 +19,21 @@ const client = new line.Client(lineConfig);
 
 const app = express();
 
+function toDate(ts) {
+  if (!ts) return null;
+  if (typeof ts.toDate === "function") return ts.toDate();
+  if (ts instanceof Date) return ts;
+  if (typeof ts === "string") {
+    const d = new Date(ts);
+    return Number.isNaN(d.getTime()) ? null : d;
+  }
+  if (typeof ts === "object") {
+    if (typeof ts.seconds === "number") return new Date(ts.seconds * 1000);
+    if (typeof ts._seconds === "number") return new Date(ts._seconds * 1000);
+  }
+  return null;
+}
+
 // 必要なオリジンだけ許可（本番に合わせて置換）
 const ALLOWED_ORIGINS = [
   "https://<your-hosting>.web.app",
@@ -130,6 +145,115 @@ app.get("/logs", async (req, res) => {
     res.json(snap.docs.map(d => ({ id: d.id, ...d.data() })));
   } catch (e) {
     console.error("logs:", e.message);
+    res.status(401).json({ error: "unauthorized" });
+  }
+});
+
+// 利用インサイト（本人）
+app.get("/insights", async (req, res) => {
+  try {
+    const auth = req.headers.authorization || "";
+    const idToken = auth.startsWith("Bearer ") ? auth.slice(7) : null;
+    const p = await verifyLineIdToken(idToken);
+    const userId = p.sub;
+
+    const limitParam = parseInt(req.query.limit, 10);
+    const limit = Number.isFinite(limitParam) ? Math.min(Math.max(limitParam, 30), 365) : 180;
+
+    const snap = await db.collection("logs")
+      .where("userId", "==", userId)
+      .orderBy("createdAt", "desc")
+      .limit(limit)
+      .get();
+
+    const logs = snap.docs.map((doc) => {
+      const data = doc.data();
+      return { id: doc.id, ...data, createdAt: toDate(data.createdAt) };
+    }).filter((log) => log.createdAt instanceof Date);
+
+    if (logs.length === 0) {
+      res.json({
+        totalCups: 0,
+        totalVolume: 0,
+        daysActive: 0,
+        avgCupVolume: 0,
+        avgDailyVolume: 0,
+        favouriteBean: null,
+        streakDays: 0,
+        rangeStart: null,
+        rangeEnd: null,
+        latestLog: null,
+        volumeByDay: [],
+        beanBreakdown: [],
+      });
+      return;
+    }
+
+    const now = new Date();
+    const dayKey = (date) => date.toISOString().slice(0, 10);
+    const dayMap = new Map();
+    const beanCount = new Map();
+    let totalVolume = 0;
+
+    logs.forEach((log) => {
+      const key = dayKey(log.createdAt);
+      if (!dayMap.has(key)) {
+        dayMap.set(key, { date: new Date(key), volume: 0, cups: 0 });
+      }
+      const dayStat = dayMap.get(key);
+      dayStat.volume += Number(log.amount) || 0;
+      dayStat.cups += 1;
+      totalVolume += Number(log.amount) || 0;
+
+      const bean = (log.beanType || "不明").trim();
+      if (!beanCount.has(bean)) beanCount.set(bean, 0);
+      beanCount.set(bean, beanCount.get(bean) + 1);
+    });
+
+    const volumeByDay = Array.from(dayMap.values())
+      .sort((a, b) => a.date - b.date)
+      .map((item) => ({
+        date: item.date.toISOString().slice(0, 10),
+        totalVolume: item.volume,
+        cups: item.cups,
+      }));
+
+    const totalCups = logs.length;
+    const daysActive = dayMap.size;
+    const avgCupVolume = totalCups > 0 ? Math.round((totalVolume / totalCups) * 10) / 10 : 0;
+    const avgDailyVolume = daysActive > 0 ? Math.round((totalVolume / daysActive) * 10) / 10 : 0;
+
+    const favouriteBean = Array.from(beanCount.entries())
+      .sort((a, b) => b[1] - a[1])
+      .map(([name, count]) => ({ name, count }));
+
+    let streak = 0;
+    for (let i = 0; i < 60; i += 1) {
+      const date = new Date(now);
+      date.setDate(date.getDate() - i);
+      if (dayMap.has(dayKey(date))) streak += 1;
+      else break;
+    }
+
+    const latestLog = logs[0];
+    const oldestLog = logs[logs.length - 1];
+
+    res.json({
+      totalCups,
+      totalVolume,
+      daysActive,
+      avgCupVolume,
+      avgDailyVolume,
+      favouriteBean: favouriteBean[0] || null,
+      beanBreakdown: favouriteBean,
+      streakDays: streak,
+      rangeStart: oldestLog?.createdAt?.toISOString?.() || null,
+      rangeEnd: latestLog?.createdAt?.toISOString?.() || null,
+      latestLog: latestLog || null,
+      volumeByDay,
+    });
+  } catch (e) {
+    console.error("insights:", e.message);
     res.status(401).json({ error: "unauthorized" });
   }
 });

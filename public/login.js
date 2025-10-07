@@ -52,14 +52,35 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
+  const redirectUri = window.location.href;
+
   try {
-    await liff.init({ liffId: LIFF_ID });
-    if (liff.isLoggedIn()) await handleLoginSuccess();
+    const state = await LiffHelper.ensureLogin({
+      liffId: LIFF_ID,
+      autoLogin: false,
+      redirectUri
+    });
+
+    if (state.redirected) return;
+    if (state.loggedIn) {
+      await handleLoginSuccess();
+      return;
+    }
 
     loginBtn?.addEventListener("click", async () => {
       showLoading(true);
       try {
-        if (!liff.isLoggedIn()) { liff.login(); return; }
+        const loginState = await LiffHelper.ensureLogin({
+          liffId: LIFF_ID,
+          autoLogin: true,
+          redirectUri
+        });
+        if (loginState.redirected) return;
+        if (!loginState.loggedIn) {
+          showError("ログインに失敗しました。");
+          showLoading(false);
+          return;
+        }
         await handleLoginSuccess();
       } catch (err) {
         console.error("login error:", err);

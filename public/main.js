@@ -7,13 +7,6 @@ if (!LIFF_ID || !API_BASE) {
   console.error("config.js の設定が不足しています (ENV.LIFF.LOG または ENV.LIFF_ID / ENV.API_BASE)");
 }
 
-async function ensureLogin() {
-  await liff.init({ liffId: LIFF_ID });
-  if (!liff.isLoggedIn()) {
-    liff.login();
-    throw new Error("redirecting");
-  }
-}
 function setLoading(btn, on) {
   if (!btn) return;
   if (on) { btn.dataset.original = btn.innerHTML; btn.disabled = true; btn.innerHTML = `<span class="loading"></span> 送信中...`; }
@@ -27,8 +20,16 @@ window.onload = async () => {
   }
 
   try {
-    await ensureLogin();
-    const idToken = liff.getIDToken();
+    const session = await LiffHelper.ensureLogin({
+      liffId: LIFF_ID,
+      redirectUri: window.location.href
+    });
+    if (session.redirected) return;
+    if (!session.loggedIn || !session.idToken) {
+      throw new Error("IDトークンの取得に失敗しました");
+    }
+
+    const idToken = session.idToken;
     const profile = await liff.getProfile().catch(() => null);
     const displayName = profile?.displayName || null;
 
@@ -105,7 +106,6 @@ window.onload = async () => {
       }
     }
   } catch (e) {
-    if (String(e).includes("redirecting")) return;
     console.error("LIFF初期化エラー:", e);
     alert("LIFFの初期化に失敗しました。");
   }
