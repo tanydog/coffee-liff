@@ -7,9 +7,38 @@
   <link rel="stylesheet" href="/styles/coffee-design.css" />
 </head>
 <body>
-  <div class="container">
-    <h1 class="h1">☕ あなたのコーヒータイプは…</h1>
-    <div id="resultsContainer" class="component-grid"></div>
+  <div class="container" style="padding-bottom:90px;">
+    <section class="card" id="usageInsights">
+      <div class="card-header">
+        <h2 class="h2" style="margin-bottom:0.25rem;">📊 利用サマリー</h2>
+        <p class="body-sm" style="margin-bottom:0;">直近の飲用傾向を自動で集計し、パーソナライズされた提案やロイヤルティ施策に活用できます。</p>
+      </div>
+      <div class="metric-grid" id="insightSummary" aria-live="polite"></div>
+      <div class="metric-section">
+        <h3 class="h4">直近のログ推移</h3>
+        <div id="insightTrend" class="trend-list"></div>
+      </div>
+      <div class="metric-section">
+        <h3 class="h4">人気の豆</h3>
+        <div id="beanBreakdown" class="bean-list"></div>
+      </div>
+    </section>
+
+    <section class="card" id="engagementCard">
+      <div class="card-header" style="border:none;">
+        <h2 class="h2" style="margin-bottom:0.25rem;">💡 リピーター強化プラン</h2>
+        <p class="body-sm" style="margin-bottom:0;">AI が算出した傾向をもとに、パートナー向けのサブスクリプション施策をレコメンドします。</p>
+      </div>
+      <div class="engagement-grid" id="engagementGrid"></div>
+    </section>
+
+    <section class="card" id="resultCard">
+      <div class="card-header">
+        <h2 class="h2" style="margin-bottom:0;">☕ あなたのコーヒータイプ</h2>
+        <p class="body-sm" style="margin-bottom:0;">診断結果に基づいておすすめの豆や体験が更新されます。</p>
+      </div>
+      <div id="resultsContainer" class="component-grid"></div>
+    </section>
   </div>
 
   <!-- 下部タブバー -->
